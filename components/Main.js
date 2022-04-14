@@ -11,6 +11,7 @@ const Stack = createStackNavigator();
 function MyStack() {
 
     return (
+        //all components recieve a 'navigation' object in their props
         <Stack.Navigator>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Menu" component={Menu} />

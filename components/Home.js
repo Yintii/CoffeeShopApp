@@ -3,18 +3,23 @@ import { Button, View } from 'react-native'
 import { Auth } from 'aws-amplify'
 import { useSelector } from 'react-redux'
 
+//navigation prop provided by react-navigation
 export const Home = ({ navigation }) => {
 
+    //cart state provided by redux
     const cart = useSelector(state => state.cart.value)
 
+    //provides the cart(n) on the header of the navigation
     React.useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (
                 <Button onPress={() => navigation.navigate("Cart", { cart: cart })} title={`Cart (${cart.length})`} />
             ),
         });
+        //updates when the navigation is changed or when the cart is updated
     }, [navigation, cart])
 
+    //aws auth function to sign out user
     async function handleSignOut() {
         try {
             await Auth.signOut();
@@ -29,7 +34,7 @@ export const Home = ({ navigation }) => {
         <View>
             <Button
                 title="Menu"
-                onPress={() => navigation.navigate("Menu", { cart: cart })}
+                onPress={() => navigation.navigate("Menu")}
             />
             <Button
                 title='SignOut'
