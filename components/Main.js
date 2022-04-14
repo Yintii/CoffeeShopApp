@@ -1,45 +1,27 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Button } from 'react-native';
-import { Auth } from 'aws-amplify';
-import { MenuItems } from './MenuItems';
-import { MenuItemInfo } from './MenuItemInfo';
-import { coffees } from '../testData/coffees';
+import Home from './Home';
+import Menu from './Menu';
+import { MenuItem } from './MenuItem';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
+const Stack = createStackNavigator();
 
-async function handleSignOut() {
-    try {
-        await Auth.signOut();
-    } catch (error) {
-        console.error(
-            "There was an error while signing out: ",
-            error
-        );
-    }
-}
-
-
-export const Main = () => {
-
-    const [selectedItem, setSelectedItem] = useState({});
-
-    function onItemSelect(itemId) {
-        console.log("Selected: ", itemId)
-        setSelectedItem(itemId);
-    }
-
+function MyStack() {
+    const [selectedItem, setSelectedItem] = useState({})
     return (
-        <View style={styles.container}>
-            <MenuItems coffees={coffees} onPress={itemId => onItemSelect(itemId)} />
-            <MenuItemInfo item={coffees.filter(coffee => coffee.id === selectedItem)[0]} />
-            <Button
-                title='SignOut'
-                onPress={handleSignOut}
-            />
-        </View>
+        <Stack.Navigator>
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Menu" component={Menu} />
+            <Stack.Screen name="MenuItem" component={MenuItem} />
+        </Stack.Navigator>
     )
 }
-const styles = StyleSheet.create({
-    container: {
-        paddingTop: 40,
-    }
-});
+
+export const Main = () => {
+    return (
+        <NavigationContainer>
+            <MyStack />
+        </NavigationContainer>
+    )
+}
