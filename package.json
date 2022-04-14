@@ -16,6 +16,7 @@
     "@react-native-picker/picker": "^2.4.0",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
+    "@reduxjs/toolkit": "^1.8.1",
     "aws-amplify": "^4.3.19",
     "aws-amplify-react-native": "^6.0.4",
     "expo": "~44.0.0",
@@ -31,7 +32,9 @@
     "react-native-screens": "~3.10.1",
     "react-native-web": "0.17.1",
     "react-navigation": "4",
-    "react-navigation-stack": "^1.10.3"
+    "react-navigation-stack": "^1.10.3",
+    "react-redux": "^7.2.8",
+    "redux": "^4.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

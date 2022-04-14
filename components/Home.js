@@ -1,10 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button, View } from 'react-native'
 import { Auth } from 'aws-amplify'
-import { coffees } from '../testData/coffees'
+import { useSelector } from 'react-redux'
 
-function Home({ navigation }) {
-    const [selectedItem, setSelectedItem] = useState({})
+export const Home = ({ navigation }) => {
+
+    const cart = useSelector(state => state.cart.value)
+
+    React.useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <Button onPress={() => navigation.navigate("Cart", { cart: cart })} title={`Cart (${cart.length})`} />
+            ),
+        });
+    }, [navigation, cart])
 
     async function handleSignOut() {
         try {
@@ -20,7 +29,7 @@ function Home({ navigation }) {
         <View>
             <Button
                 title="Menu"
-                onPress={() => navigation.navigate("Menu")}
+                onPress={() => navigation.navigate("Menu", { cart: cart })}
             />
             <Button
                 title='SignOut'
