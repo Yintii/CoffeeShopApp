@@ -10,7 +10,7 @@ export const MenuItem = ({ route, navigation }) => {
     const { item } = route.params;
 
 
-    //provides the cart(n) on the header of the navigation
+    //provides the 'cart(n)' on the header of the navigation
     React.useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (

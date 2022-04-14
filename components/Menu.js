@@ -1,25 +1,34 @@
 import React from 'react'
 import { coffees } from '../testData/coffees'
-import { FlatList } from 'react-native-gesture-handler'
-import { ListItem } from 'react-native-elements'
+import { ScrollView } from 'react-native-gesture-handler'
+import { ListItem, Avatar, Image } from 'react-native-elements'
 import { Button } from 'react-native'
 import { useSelector } from 'react-redux'
+
 
 export const Menu = ({ navigation }) => {
     //cart state provided by redux
     const cart = useSelector(state => state.cart.value)
 
-    const renderItems = ({ item }) => {
+    const RenderItems = () => {
         //keep number format of x.xx and change to string
-        const price = item.price.toFixed(2).toString();
-        return (
-            <ListItem
-                title={item.name}
-                subtitle={price}
-                onPress={() => navigation.navigate('MenuItem',
-                    { item: item, title: item.name, cart: cart })}
-            />
-        )
+        let drinks = coffees.map(each => {
+            const price = each.price.toFixed(2).toString();
+            return (
+                <ListItem key={each.id} onPress={() => navigation.navigate('MenuItem',
+                    { item: each, title: each.name, cart: cart })} >
+                    <Avatar rounded source={each.img} />
+
+                    <ListItem.Content>
+                        <ListItem.Title>{each.name}</ListItem.Title>
+                        <ListItem.Subtitle>{price}</ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron />
+                </ListItem>
+            )
+        })
+
+        return drinks
     }
 
 
@@ -36,11 +45,9 @@ export const Menu = ({ navigation }) => {
     return (
         //create a list of items using the coffee data, render it with the renderItems components
         // each gets a unique key from the keyextractor that is their respective id
-        <FlatList
-            data={coffees}
-            renderItem={renderItems}
-            keyExtractor={item => item.id.toString()}
-        />
+        <ScrollView>
+            <RenderItems />
+        </ScrollView>
     )
 }
 
