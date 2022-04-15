@@ -48,7 +48,7 @@ export const Cart = ({ navigation, route }) => {
         */
         let total = 0;
         for (let i = 0; i < cart.length; i++) {
-            total += cart[i].price;
+            total += cart[i].price.small;
         }
         return <Card><Text>Your Total is: ${total.toFixed(2)}</Text></Card>
 
