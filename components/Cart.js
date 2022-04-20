@@ -1,10 +1,11 @@
 import React from 'react'
 
-import { StyleSheet, View, Text, Button, Image } from 'react-native';
+import { StyleSheet, View, Text, Button, Image, TouchableOpacity } from 'react-native';
 import { ListItem, Card } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItem } from '../redux/cartSlice';
+import { Icon } from '@rneui/themed';
 
 
 export const Cart = ({ navigation, route }) => {
@@ -26,6 +27,16 @@ export const Cart = ({ navigation, route }) => {
         }
         dispatch(removeItem(index))
     }
+    function DeleteCartItemButton({ id }) {
+        return (
+            <TouchableOpacity
+                onPress={() => removeItemFromCart(id)}
+                style={styles.removeItemButton}
+            >
+                <Text style={styles.removeText}>Delete</Text>
+            </TouchableOpacity >
+        )
+    }
 
     function RenderCartItems() {
         let cartItems = cart.map(item => {
@@ -41,14 +52,9 @@ export const Cart = ({ navigation, route }) => {
                 <ListItem.Swipeable
                     key={item.id}
                     rightContent={() => (
-                        <Button
-                            title="Delete"
-                            onPress={() => removeItemFromCart(item.id)}
-                            icon={{ name: 'delete', color: 'white' }}
-                            buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }}
-                        />
-                    )
-                    }
+                        <DeleteCartItemButton id={item.id} />
+                    )}
+
                 >
                     <ListItem.Content style={styles.cartItem}>
                         <Image source={item.img} style={{ width: 50, height: 50, }} />
@@ -161,5 +167,18 @@ const styles = StyleSheet.create({
         padding: 10,
         overflow: 'hidden',
         backgroundColor: 'lightgrey',
+    },
+    removeItemButton: {
+        display: 'flex',
+        backgroundColor: 'red',
+        textAlign: 'center',
+        color: 'white',
+        justifyContent: 'center',
+        height: 75
+    },
+    removeText: {
+        color: 'white',
+        textAlign: 'center',
+        fontSize: 20
     }
 })
