@@ -1,6 +1,6 @@
 import React from 'react'
 import { ScrollView, View, Text, Button, StyleSheet } from 'react-native'
-import { Image } from 'react-native-elements';
+import { Image } from '@rneui/themed';
 import { useSelector, useDispatch } from 'react-redux';
 import { addItem } from '../redux/cartSlice';
 
@@ -134,6 +134,17 @@ export const MenuItem = ({ route, navigation }) => {
         updateOrder({ ...order, count: numberOfItems + 1 });
     }
 
+    function handleAddToCart() {
+        dispatch(addItem(order))
+        setCream(item.modifications.cream)
+        setAlmondmilk(item.modifications.almondmilk)
+        setOatmilk(item.modifications.oatmilk)
+        setSugar(item.modifications.sugar)
+        setStevia(item.modifications.stevia)
+        setNumberOfItems(item.count)
+        setSize(item.size)
+    }
+
     //provides the 'cart(n)' on the header of the navigation
     React.useLayoutEffect(() => {
         navigation.setOptions({
@@ -155,7 +166,6 @@ export const MenuItem = ({ route, navigation }) => {
             <View>
 
                 <RenderPricesAndSizes />
-
                 <Button title="Show order" onPress={() => printOrder()} />
 
                 {/* render all the modifications*/}
@@ -169,7 +179,7 @@ export const MenuItem = ({ route, navigation }) => {
                     <Text style={{ textAlign: 'center' }}>{numberOfItems}</Text>
                     <Button style={styles.incDecBtns} title='+' onPress={() => incrementOrder()} />
                 </View>
-                <Button title="Add to Cart" onPress={() => dispatch(addItem(order))} />
+                <Button title="Add to Cart" onPress={() => handleAddToCart()} />
                 <Button title="Go Back" onPress={() => navigation.goBack()} />
             </View>
         </ScrollView>
