@@ -13,6 +13,7 @@ export const Cart = ({ navigation, route }) => {
             return (
                 <Card
                     featuredTitle={item.name}
+                    styles={styles.cartItem}
                     /*
                         VERYBAD
                         This code needs to be changed with
@@ -31,6 +32,7 @@ export const Cart = ({ navigation, route }) => {
                     key={item.id * Math.random()}
                 >
                     <Text>{item.name}</Text>
+                    <Text>x{item.count}</Text>
 
                 </Card>
             )
@@ -71,7 +73,12 @@ const styles = StyleSheet.create({
         maxHeight: 700,
     },
     btn: {
-        marginTop: 20,
+        marginTop: 200,
         marginBottom: 20
+    },
+    cartItem: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
     }
 })

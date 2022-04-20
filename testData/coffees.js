@@ -2,6 +2,8 @@ export const coffees = [
     {
         id: 1,
         name: "Regular Coffee",
+        size: 'small',
+        count: 1,
         price: {
             small: 2.00,
             medium: 2.69,
@@ -21,6 +23,8 @@ export const coffees = [
     {
         id: 2,
         name: "Irish Coffee",
+        size: 'small',
+        count: 1,
         price: {
             small: 3.00,
             medium: 4.29,
@@ -39,6 +43,8 @@ export const coffees = [
     {
         id: 3,
         name: "Pour over Blend",
+        size: 'small',
+        count: 1,
         price: {
             small: 2.50,
             medium: 3.00,
@@ -58,6 +64,8 @@ export const coffees = [
     {
         id: 4,
         name: "Mountain Spice special blend",
+        size: 'small',
+        count: 1,
         price: {
             small: 4.00,
             medium: 6.50,
@@ -76,6 +84,8 @@ export const coffees = [
     {
         id: 5,
         name: "Vietnamese Coffee",
+        size: 'small',
+        count: 1,
         price: {
             small: 3.00,
             medium: 4.69,
