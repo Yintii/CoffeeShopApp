@@ -13,7 +13,6 @@ export const Menu = ({ navigation }) => {
     const RenderItems = () => {
         //keep number format of x.xx and change to string
         let drinks = coffees.map(each => {
-            console.log(each.price)
             const price = each.price.small.toFixed(2).toString();
             return (
                 <ListItem key={each.id} onPress={() => navigation.navigate('MenuItem',

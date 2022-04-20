@@ -1,14 +1,8 @@
+import React from 'react'
+import { ScrollView, View, Text, Button, StyleSheet } from 'react-native'
+import { Image } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
 import { addItem } from '../redux/cartSlice';
-import {
-    ScrollView,
-    View,
-    Text,
-    Button,
-    StyleSheet
-} from 'react-native'
-import React from 'react'
-import { Image } from 'react-native-elements';
 
 
 
@@ -25,11 +19,11 @@ export const MenuItem = ({ route, navigation }) => {
 
     const [size, setSize] = React.useState(item.size);
 
-    const [cream, setCream] = React.useState(order.modifications.cream)
-    const [almondmilk, setAlmondmilk] = React.useState(order.modifications.almondmilk)
-    const [oatmilk, setOatmilk] = React.useState(order.modifications.oatmilk)
-    const [sugar, setSugar] = React.useState(order.modifications.sugar)
-    const [stevia, setStevia] = React.useState(order.modifications.stevia)
+    const [cream, setCream] = React.useState(item.modifications.cream)
+    const [almondmilk, setAlmondmilk] = React.useState(item.modifications.almondmilk)
+    const [oatmilk, setOatmilk] = React.useState(item.modifications.oatmilk)
+    const [sugar, setSugar] = React.useState(item.modifications.sugar)
+    const [stevia, setStevia] = React.useState(item.modifications.stevia)
 
     const [numberOfItems, setNumberOfItems] = React.useState(1);
 
@@ -38,113 +32,42 @@ export const MenuItem = ({ route, navigation }) => {
     }
 
     function handleSizeChoice(choosenSize) {
-        order.size = choosenSize
-        updateOrder(order)
+        let temp = { ...order };
+        temp.size = choosenSize
+        updateOrder({ ...temp })
         setSize(choosenSize)
-        console.log("updated size");
     }
 
     function handleModToggle(mod) {
+        let temp = { ...order.modifications }
         switch (mod) {
             case "cream":
-                if (!order.modifications.cream) {
-                    order.modifications.cream = true;
-                    setCream(true);
-                    console.log("creme added")
-                } else {
-                    order.modifications.cream = false;
-                    setCream(false)
-                    console.log("creme removed")
-                }
+                setCream(!cream);
+                temp.cream = !temp.cream
                 break;
-            case "almondmilk":
-                if (!order.modifications.almondmilk) {
-                    order.modifications.almondmilk = true;
-                    setAlmondmilk(true)
-                    console.log("almond milk added")
-                } else {
-                    order.modifications.almondmilk = false;
-                    setAlmondmilk(false)
-                    console.log("almond milk removed")
-                }
-                break;
-            case "oatmilk":
-                if (!order.modifications.oatmilk) {
-                    order.modifications.oatmilk = true;
-                    setOatmilk(true)
-                    console.log("oatmilk added")
-                } else {
-                    order.modifications.oatmilk = false;
-                    setOatmilk(false)
-                    console.log("oatmilk removed")
-                }
-                break;
-            case "stevia":
-                if (!order.modifications.stevia) {
-                    order.modifications.stevia = true;
-                    setStevia(true)
-                    console.log("stevia added")
-                } else {
-                    order.modifications.stevia = false;
-                    setStevia(false)
-                    console.log("stevia removed")
-                }
-                break;
-            case "sugar":
-                if (!order.modifications.sugar) {
-                    order.modifications.sugar = true;
-                    setSugar(true)
-                    console.log("sugar added")
-                } else {
-                    order.modifications.sugar = false;
-                    setSugar(false);
-                    console.log("sugar removed")
-                }
-                break;
-            default:
-                console.log("something else pressed")
+            case "almondmilk": setAlmondmilk(!almondmilk); break;
+            case "oatmilk": setOatmilk(!oatmilk); break;
+            case "stevia": setStevia(!stevia); break;
+            case "sugar": setSugar(!sugar); break;
+            default: console.log("something else pressed");
         }
-        updateOrder(order)
+        updateOrder({ ...order, modifications: temp })
     }
 
     function RenderPricesAndSizes() {
         return (
             <View style={styles.sizesContainer}>
                 {size === "small"
-                    ? <Text
-                        style={styles.sizeChosen}
-                        onPress={() => handleSizeChoice("small")}
-                    >
-                        SM: ${item.price.small.toFixed(2)}</Text>
-                    : <Text
-                        style={styles.sizes}
-                        onPress={() => handleSizeChoice("small")}
-                    >
-                        SM: ${item.price.small.toFixed(2)}</Text>
+                    ? <Text style={styles.sizeChosen} onPress={() => handleSizeChoice("small")}> SM: ${item.price.small.toFixed(2)}</Text>
+                    : <Text style={styles.sizes} onPress={() => handleSizeChoice("small")}>SM: ${item.price.small.toFixed(2)}</Text>
                 }
                 {size === "medium"
-                    ? <Text
-                        style={styles.sizeChosen}
-                        onPress={() => handleSizeChoice("medium")}
-                    >
-                        MD: ${item.price.medium.toFixed(2)}</Text>
-                    : <Text
-                        style={styles.sizes}
-                        onPress={() => handleSizeChoice("medium")}
-                    >
-                        MD: ${item.price.medium.toFixed(2)}</Text>
+                    ? <Text style={styles.sizeChosen} onPress={() => handleSizeChoice("medium")}> MD: ${item.price.medium.toFixed(2)}</Text>
+                    : <Text style={styles.sizes} onPress={() => handleSizeChoice("medium")}> MD: ${item.price.medium.toFixed(2)}</Text>
                 }
                 {size === "large"
-                    ? <Text
-                        style={styles.sizeChosen}
-                        onPress={() => handleSizeChoice("large")}
-                    >
-                        LG: ${item.price.large.toFixed(2)}</Text>
-                    : <Text
-                        style={styles.sizes}
-                        onPress={() => handleSizeChoice("large")}
-                    >
-                        LG: ${item.price.large.toFixed(2)}</Text>
+                    ? <Text style={styles.sizeChosen} onPress={() => handleSizeChoice("large")}> LG: ${item.price.large.toFixed(2)}</Text>
+                    : <Text style={styles.sizes} onPress={() => handleSizeChoice("large")}>LG: ${item.price.large.toFixed(2)}</Text>
                 }
             </View>
         )
@@ -154,52 +77,24 @@ export const MenuItem = ({ route, navigation }) => {
         return (
             <View>
                 {cream
-                    ? <Text
-                        onPress={() => handleModToggle("cream")}
-                        style={styles.selectedMod}>
-                        Cream
-                    </Text>
-                    : <Text
-                        onPress={() => handleModToggle("cream")}
-                        style={styles.mod}>
-                        No Creme
-                    </Text>}
+                    ? <Text onPress={() => handleModToggle("cream")} style={styles.selectedMod}> Cream </Text>
+                    : <Text onPress={() => handleModToggle("cream")} style={styles.mod}> No Creme</Text>}
 
                 {almondmilk
-                    ? <Text
-                        onPress={() => handleModToggle("almondmilk")}
-                        style={styles.selectedMod}>Almond Milk</Text>
-                    : <Text
-                        onPress={() => handleModToggle("almondmilk")}
-                        style={styles.mod}
-                    >No Almond Milk</Text>
+                    ? <Text onPress={() => handleModToggle("almondmilk")} style={styles.selectedMod}>Almond Milk</Text>
+                    : <Text onPress={() => handleModToggle("almondmilk")} style={styles.mod} >No Almond Milk</Text>
                 }
                 {oatmilk
-                    ? <Text
-                        onPress={() => handleModToggle("oatmilk")}
-                        style={styles.selectedMod}>Oat Milk</Text>
-                    : <Text
-                        onPress={() => handleModToggle("oatmilk")}
-                        style={styles.mod}
-                    >No Oat Milk</Text>
+                    ? <Text onPress={() => handleModToggle("oatmilk")} style={styles.selectedMod}>Oat Milk</Text>
+                    : <Text onPress={() => handleModToggle("oatmilk")} style={styles.mod}>No Oat Milk</Text>
                 }
                 {sugar
-                    ? <Text
-                        onPress={() => handleModToggle("sugar")}
-                        style={styles.selectedMod}>Sugar</Text>
-                    : <Text
-                        onPress={() => handleModToggle("sugar")}
-                        style={styles.mod}
-                    >No Sugar</Text>
+                    ? <Text onPress={() => handleModToggle("sugar")} style={styles.selectedMod}>Sugar</Text>
+                    : <Text onPress={() => handleModToggle("sugar")} style={styles.mod}>No Sugar</Text>
                 }
                 {stevia
-                    ? <Text
-                        onPress={() => handleModToggle("stevia")}
-                        style={styles.selectedMod}>Stevia</Text>
-                    : <Text
-                        onPress={() => handleModToggle("stevia")}
-                        style={styles.mod}
-                    >No Stevia</Text>
+                    ? <Text onPress={() => handleModToggle("stevia")} style={styles.selectedMod}>Stevia</Text>
+                    : <Text onPress={() => handleModToggle("stevia")} style={styles.mod}>No Stevia</Text>
                 }
             </View >
 
@@ -208,20 +103,14 @@ export const MenuItem = ({ route, navigation }) => {
 
     //for handling how many drinks you want
     function decrementOrder() {
-        if (numberOfItems == 1) {
-            return
-        }
+        if (numberOfItems == 1) return
         setNumberOfItems(numberOfItems - 1)
-        order.count = numberOfItems - 1;
         updateOrder(order);
-        console.log(numberOfItems);
     }
+
     function incrementOrder() {
         setNumberOfItems(numberOfItems + 1)
-        order.count = numberOfItems + 1;
         updateOrder(order);
-        console.log(numberOfItems + 1);
-
     }
 
     //provides the 'cart(n)' on the header of the navigation
@@ -243,26 +132,24 @@ export const MenuItem = ({ route, navigation }) => {
                 {item.name}
             </Text>
             <View>
+
                 <RenderPricesAndSizes />
+
                 <Button title="Show order" onPress={() => printOrder()} />
+
+                {/* render all the modifications*/}
                 <View style={styles.modContainer}>
                     <RenderMods />
                 </View>
+
+                {/* Increment and decremnt view */}
                 <View style={styles.numberSelector}>
                     <Button style={styles.incDecBtns} title='-' onPress={() => decrementOrder()} />
                     <Text style={{ textAlign: 'center' }}>{numberOfItems}</Text>
                     <Button style={styles.incDecBtns} title='+' onPress={() => incrementOrder()} />
                 </View>
-                <Button
-                    title="Add to Cart"
-                    onPress={() => {
-                        dispatch(addItem(order))
-                    }}
-                />
-                <Button
-                    title="Go Back"
-                    onPress={() => navigation.goBack()}
-                />
+                <Button title="Add to Cart" onPress={() => dispatch(addItem(order))} />
+                <Button title="Go Back" onPress={() => navigation.goBack()} />
             </View>
         </ScrollView>
     )

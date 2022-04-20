@@ -1,57 +1,70 @@
 import React from 'react'
 import { Card } from 'react-native-elements';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text, Button, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 export const Cart = ({ navigation, route }) => {
     //this is the cart from redux still, passed in from whatever navigate() sent it here.
     const { cart } = route.params;
-
+    console.log(cart)
 
     function RenderCartItems() {
         let cartItems = cart.map(item => {
+            let price;
+            if (item.size === "small") {
+                price = item.price.small;
+            } else if (item.size === "medium") {
+                price = item.price.medium;
+            } else if (item.size === "large") {
+                price = item.price.large;
+            }
             return (
-                <Card
-                    featuredTitle={item.name}
-                    styles={styles.cartItem}
-                    /*
-                        VERYBAD
-                        This code needs to be changed with
-                        the changes in menuitem. Each menuitem
-                        will be added to a counter if there
-                        are multiple of the same item
-
-                        that's what this wonky Math.random() call is here for
-
-                        So when 2 coffees are ordered (no mods let's say)
-                        the cart should display " Black Coffee x2" instead 
-                        of two instances of black coffee
-                        then the ids will correspond to each part of the
-                        order and the number of items
-                    */
-                    key={item.id * Math.random()}
+                <View
+                    style={styles.cartItem}
+                    key={item.id}
                 >
-                    <Text>{item.name}</Text>
-                    <Text>x{item.count}</Text>
+                    <View style={{ width: 100 }}>
+                        <Text>{item.name}</Text>
+                        <Text style={{ color: 'grey', fontSize: 12 }}>{item.size}</Text>
+                    </View>
+                    <View style={styles.cartItemPrice}>
+                        <Text>${(price).toFixed(2)}</Text>
+                        <Text style={styles.itemMultiplier}>x{item.count}</Text>
+                        <Text>${(price * item.count).toFixed(2)}</Text>
+                    </View>
+                    <View>
+                        {item.modifications.cream &&
+                            <Text>Cream</Text>
+                        }
+                        {item.modifications.oatmilk &&
+                            <Text>Oat milk</Text>
+                        }
+                        {item.modifications.sugar &&
+                            <Text>Sugar</Text>
+                        }
+                    </View>
+                </View >
 
-                </Card>
             )
         })
         return cartItems
     }
 
     function RenderPrice() {
-        /*
-            totals up the price of all items in the cart
-            this needs to be changed as well bc when we 
-            change the cart structure to include modifications to items
-            and implementing the changes to multiple items in 1 order
-            this will no longer work
-        */
         let total = 0;
-        for (let i = 0; i < cart.length; i++) {
-            total += cart[i].price.small;
-        }
+        cart.forEach(item => {
+            switch (item.size) {
+                case ('small'):
+                    total += item.price.small * item.count
+                    break;
+                case ('medium'):
+                    total += item.price.medium * item.count
+                    break;
+                case ('large'):
+                    total += item.price.large * item.count
+                    break;
+            }
+        })
         return <Card><Text>Your Total is: ${total.toFixed(2)}</Text></Card>
 
         r
@@ -77,8 +90,28 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     cartItem: {
+        padding: 10,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+        margin: 20,
+        alignItems: 'center',
+    },
+    cartItemPrice: {
+        padding: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+        margin: 20,
+        width: 150,
+        alignItems: 'center',
+    },
+    itemMultiplier: {
+        borderRadius: 10,
+        padding: 10,
+        overflow: 'hidden',
+        backgroundColor: 'lightgrey',
     }
 })
