@@ -31,6 +31,15 @@ export const MenuItem = ({ route, navigation }) => {
         console.log(order);
     }
 
+    function returnItemCount() {
+        let totalItems = 0;
+        if (!cart[0]) return 0
+        for (let i = 0; i < cart.length; i++) {
+            totalItems += cart[i].count;
+        }
+        return totalItems;
+    }
+
     function handleSizeChoice(choosenSize) {
         let temp = { ...order };
         temp.size = choosenSize
@@ -45,10 +54,22 @@ export const MenuItem = ({ route, navigation }) => {
                 setCream(!cream);
                 temp.cream = !temp.cream
                 break;
-            case "almondmilk": setAlmondmilk(!almondmilk); break;
-            case "oatmilk": setOatmilk(!oatmilk); break;
-            case "stevia": setStevia(!stevia); break;
-            case "sugar": setSugar(!sugar); break;
+            case "almondmilk":
+                setAlmondmilk(!almondmilk);
+                temp.almondmilk = !temp.almondmilk
+                break;
+            case "oatmilk":
+                setOatmilk(!oatmilk);
+                temp.oatmilk = !temp.oatmilk
+                break;
+            case "stevia":
+                setStevia(!stevia);
+                temp.stevia = !temp.stevia
+                break;
+            case "sugar":
+                setSugar(!sugar);
+                temp.sugar = !temp.sugar
+                break;
             default: console.log("something else pressed");
         }
         updateOrder({ ...order, modifications: temp })
@@ -105,19 +126,19 @@ export const MenuItem = ({ route, navigation }) => {
     function decrementOrder() {
         if (numberOfItems == 1) return
         setNumberOfItems(numberOfItems - 1)
-        updateOrder(order);
+        updateOrder({ ...order, count: numberOfItems - 1 });
     }
 
     function incrementOrder() {
         setNumberOfItems(numberOfItems + 1)
-        updateOrder(order);
+        updateOrder({ ...order, count: numberOfItems + 1 });
     }
 
     //provides the 'cart(n)' on the header of the navigation
     React.useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <Button onPress={() => navigation.navigate("Cart", { cart: cart })} title={`Cart (${cart.length})`} />
+                <Button onPress={() => navigation.navigate("Cart", { cart: cart })} title={`Cart (${returnItemCount()})`} />
             ),
             title: `${item.name}`
         });

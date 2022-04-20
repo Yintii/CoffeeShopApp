@@ -42,6 +42,12 @@ export const Cart = ({ navigation, route }) => {
                         {item.modifications.sugar &&
                             <Text>Sugar</Text>
                         }
+                        {item.modifications.stevia &&
+                            <Text>Stevia</Text>
+                        }
+                        {item.modifications.almondmilk &&
+                            <Text>Almond milk</Text>
+                        }
                     </View>
                 </View >
 
@@ -69,6 +75,14 @@ export const Cart = ({ navigation, route }) => {
 
         r
     }
+
+    //provides the 'cart(n)' on the header of the navigation
+    React.useLayoutEffect(() => {
+        navigation.setOptions({
+            title: `Cart`,
+        });
+        //updates when the navigation is changed or when the cart is updated
+    }, [navigation, cart])
     return (
         <View style={styles.container}>
             <ScrollView >

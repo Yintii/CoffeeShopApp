@@ -9,11 +9,20 @@ export const Home = ({ navigation }) => {
     //cart state provided by redux
     const cart = useSelector(state => state.cart.value)
 
+    function returnItemCount() {
+        let totalItems = 0;
+        if (!cart[0]) return 0
+        for (let i = 0; i < cart.length; i++) {
+            totalItems += cart[i].count;
+        }
+        return totalItems;
+    }
+
     //provides the cart(n) on the header of the navigation
     React.useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <Button onPress={() => navigation.navigate("Cart", { cart: cart })} title={`Cart (${cart.length})`} />
+                <Button onPress={() => navigation.navigate("Cart", { cart: cart })} title={`Cart (${returnItemCount()})`} />
             ),
         });
         //updates when the navigation is changed or when the cart is updated
@@ -30,6 +39,8 @@ export const Home = ({ navigation }) => {
             );
         }
     }
+
+
     return (
         <View>
             <Button
