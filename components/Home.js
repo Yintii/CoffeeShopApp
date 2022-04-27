@@ -9,6 +9,7 @@ export const Home = ({ navigation }) => {
     //cart state provided by redux
     const cart = useSelector(state => state.cart.value)
 
+    //Need to create a import for this function, it's rewritten in three other components
     function returnItemCount() {
         let totalItems = 0;
         if (!cart[0]) return 0

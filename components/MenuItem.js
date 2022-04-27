@@ -1,10 +1,8 @@
 import React from 'react'
-import { ScrollView, View, Text, Button, StyleSheet } from 'react-native'
-import { Image } from '@rneui/themed';
+import { ScrollView, View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
+import { Image, ListItem } from '@rneui/themed';
 import { useSelector, useDispatch } from 'react-redux';
 import { addItem } from '../redux/cartSlice';
-
-
 
 export const MenuItem = ({ route, navigation }) => {
 
@@ -19,13 +17,17 @@ export const MenuItem = ({ route, navigation }) => {
 
     const [size, setSize] = React.useState(item.size);
 
-    const [cream, setCream] = React.useState(item.modifications.cream)
+
     const [almondmilk, setAlmondmilk] = React.useState(item.modifications.almondmilk)
     const [oatmilk, setOatmilk] = React.useState(item.modifications.oatmilk)
-    const [sugar, setSugar] = React.useState(item.modifications.sugar)
     const [stevia, setStevia] = React.useState(item.modifications.stevia)
+    const [sugar, setSugar] = React.useState(item.modifications.sugar)
+    const [cream, setCream] = React.useState(item.modifications.cream)
+
 
     const [numberOfItems, setNumberOfItems] = React.useState(1);
+
+    const [modsExpanded, setModsExpanded] = React.useState(false);
 
     function printOrder() {
         console.log(order);
@@ -96,28 +98,37 @@ export const MenuItem = ({ route, navigation }) => {
 
     function RenderMods() {
         return (
-            <View>
-                {cream
-                    ? <Text onPress={() => handleModToggle("cream")} style={styles.selectedMod}> Cream </Text>
-                    : <Text onPress={() => handleModToggle("cream")} style={styles.mod}> No Creme</Text>}
-
-                {almondmilk
-                    ? <Text onPress={() => handleModToggle("almondmilk")} style={styles.selectedMod}>Almond Milk</Text>
-                    : <Text onPress={() => handleModToggle("almondmilk")} style={styles.mod} >No Almond Milk</Text>
-                }
-                {oatmilk
-                    ? <Text onPress={() => handleModToggle("oatmilk")} style={styles.selectedMod}>Oat Milk</Text>
-                    : <Text onPress={() => handleModToggle("oatmilk")} style={styles.mod}>No Oat Milk</Text>
-                }
-                {sugar
-                    ? <Text onPress={() => handleModToggle("sugar")} style={styles.selectedMod}>Sugar</Text>
-                    : <Text onPress={() => handleModToggle("sugar")} style={styles.mod}>No Sugar</Text>
-                }
-                {stevia
-                    ? <Text onPress={() => handleModToggle("stevia")} style={styles.selectedMod}>Stevia</Text>
-                    : <Text onPress={() => handleModToggle("stevia")} style={styles.mod}>No Stevia</Text>
-                }
-            </View >
+            <>
+                <ListItem.Content>
+                    {cream
+                        ? <Text onPress={() => handleModToggle("cream")} style={styles.selectedMod}>Cream</Text>
+                        : <Text onPress={() => handleModToggle("cream")} style={styles.mod}>Cream</Text>}
+                </ListItem.Content>
+                <ListItem.Content>
+                    {almondmilk
+                        ? <Text onPress={() => handleModToggle("almondmilk")} style={styles.selectedMod}>Almond Milk</Text>
+                        : <Text onPress={() => handleModToggle("almondmilk")} style={styles.mod} >Almond Milk</Text>
+                    }
+                </ListItem.Content>
+                <ListItem.Content>
+                    {oatmilk
+                        ? <Text onPress={() => handleModToggle("oatmilk")} style={styles.selectedMod}>Oat Milk</Text>
+                        : <Text onPress={() => handleModToggle("oatmilk")} style={styles.mod}>Oat Milk</Text>
+                    }
+                </ListItem.Content>
+                <ListItem.Content>
+                    {sugar
+                        ? <Text onPress={() => handleModToggle("sugar")} style={styles.selectedMod}>Sugar</Text>
+                        : <Text onPress={() => handleModToggle("sugar")} style={styles.mod}>Sugar</Text>
+                    }
+                </ListItem.Content>
+                <ListItem.Content>
+                    {stevia
+                        ? <Text onPress={() => handleModToggle("stevia")} style={styles.selectedMod}>Stevia</Text>
+                        : <Text onPress={() => handleModToggle("stevia")} style={styles.mod}>Stevia</Text>
+                    }
+                </ListItem.Content>
+            </>
 
         )
     }
@@ -134,6 +145,8 @@ export const MenuItem = ({ route, navigation }) => {
         updateOrder({ ...order, count: numberOfItems + 1 });
     }
 
+    //handles dispatch to redux store, then resets all 
+    //variables for a new order
     function handleAddToCart() {
         dispatch(addItem(order))
         setCream(item.modifications.cream)
@@ -164,22 +177,37 @@ export const MenuItem = ({ route, navigation }) => {
                 {item.name}
             </Text>
             <View>
-
                 <RenderPricesAndSizes />
-                <Button title="Show order" onPress={() => printOrder()} />
-
-                {/* render all the modifications*/}
-                <View style={styles.modContainer}>
-                    <RenderMods />
-                </View>
-
                 {/* Increment and decremnt view */}
                 <View style={styles.numberSelector}>
                     <Button style={styles.incDecBtns} title='-' onPress={() => decrementOrder()} />
                     <Text style={{ textAlign: 'center' }}>{numberOfItems}</Text>
                     <Button style={styles.incDecBtns} title='+' onPress={() => incrementOrder()} />
                 </View>
-                <Button title="Add to Cart" onPress={() => handleAddToCart()} />
+                {/* Add to cart button */}
+                <TouchableOpacity style={styles.addToCartBtn} onPress={() => handleAddToCart()}>
+                    <Text style={styles.addToCartText}>Add to Cart</Text>
+                </TouchableOpacity>
+
+
+                {/* render all the modifications*/}
+                <ListItem.Accordion
+                    content={
+                        <>
+                            <ListItem.Content>
+                                <ListItem.Title>Modifications</ListItem.Title>
+                            </ListItem.Content>
+                        </>
+                    }
+                    isExpanded={modsExpanded}
+                    onPress={() => {
+                        setModsExpanded(!modsExpanded);
+                    }}
+                >
+                    <View style={styles.modContainer}>
+                        <RenderMods />
+                    </View>
+                </ListItem.Accordion>
                 <Button title="Go Back" onPress={() => navigation.goBack()} />
             </View>
         </ScrollView>
@@ -191,9 +219,9 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         padding: 20,
-        minHeight: 450
+        minHeight: '100%'
     },
     itemName: {
         textAlign: 'center',
@@ -215,26 +243,43 @@ const styles = StyleSheet.create({
         padding: 20,
         marginVertical: 10,
         backgroundColor: 'purple',
-        color: 'white'
-    },
-    modContainer: {
-        display: 'flex',
+        color: 'white',
+        borderRadius: 20,
+        overflow: 'hidden'
     },
     selectedMod: {
         backgroundColor: 'purple',
-        marginVertical: 20,
         color: 'white',
-        padding: 20,
         marginVertical: 10,
-        textAlign: 'center'
+        padding: 10,
+        textAlign: 'center',
+        width: '100%',
+        borderRadius: 20,
+        overflow: 'hidden'
     },
     mod: {
         backgroundColor: 'black',
-        marginVertical: 20,
         color: 'white',
-        padding: 20,
         marginVertical: 10,
-        textAlign: 'center'
+        padding: 10,
+        textAlign: 'center',
+        width: '100%'
+    },
+    modContainer: {
+        display: 'flex',
+        marginVertical: 10
+    },
+    addToCartBtn: {
+        display: 'flex',
+        backgroundColor: 'black',
+
+    },
+    addToCartText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 20,
+        marginVertical: 15,
+
     },
     numberSelector: {
         display: 'flex',
