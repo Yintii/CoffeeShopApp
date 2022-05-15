@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { ListItem, Avatar } from '@rneui/themed'
 import { Button } from 'react-native'
 import { useSelector } from 'react-redux'
+import { Auth } from 'aws-amplify'
 
 
 export const Menu = ({ navigation }) => {
@@ -18,6 +19,28 @@ export const Menu = ({ navigation }) => {
         }
         return totalItems;
     }
+
+    //aws auth function to sign out user
+    async function handleSignOut() {
+        try {
+            await Auth.signOut();
+        } catch (error) {
+            console.error(
+                "There was an error while signing out: ",
+                error
+            );
+        }
+    }
+
+    //provides the cart(n) on the header of the navigation
+    React.useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <Button onPress={() => handleSignOut()} title={`Log out`} />
+            ),
+        });
+        //updates when the navigation is changed or when the cart is updated
+    }, [navigation, cart])
 
     const RenderItems = () => {
         let drinks = coffees.map(each => {

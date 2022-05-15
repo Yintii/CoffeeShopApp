@@ -4,8 +4,10 @@ import { ListItem, Card } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItem } from '../redux/cartSlice';
-import { CardField, confirmPayment, StripeProvider } from '@stripe/stripe-react-native';
 import { STRIPE_API_KEY } from "@env"
+import stripe from 'react-native-stripe-payments';
+stripe.setOptions({ publishingKey: STRIPE_API_KEY });
+
 
 export const Cart = ({ navigation }) => {
 
@@ -14,87 +16,12 @@ export const Cart = ({ navigation }) => {
     const cart = useSelector(state => state.cart.value)
     const [modalActive, setModalActive] = React.useState(false)
     const dispatch = useDispatch()
-    const [completeCardDetails, setCompleteCardDetails] = React.useState(false)
 
-    const CheckOut = () => {
-
-        //this fetch is going to the a lambda, but I am getting undefined results back
-        //need to fix/adjust lamda
-        const fetchPaymentIntentClientSecret = async () => {
-            const response = await fetch('https://h2vkwvz4nnlymrhn6sog7775fm0wrxag.lambda-url.us-west-1.on.aws/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    currency: 'usd',
-                }),
-            });
-
-            const { clientSecret } = await response.json();
-
-            return clientSecret;
-        }
-
-        const handlePaymentPress = async () => {
-            if (!completeCardDetails) return
-
-            const clientSecret = await fetchPaymentIntentClientSecret();
-            console.log("Client secret: ", clientSecret)
-
-            const billingDetails = {
-                email: 'kele@keleheart.com'
-            }
-
-            const { paymentIntent, errors } = await confirmPayment(clientSecret, {
-                type: 'Card',
-                billingDetails,
-            });
-
-            if (errors) {
-                console.error(errors);
-            } else {
-                console.log("success, ", paymentIntent);
-            }
-
-        };
-
-        return (
-            <Modal
-                presentationStyle="pageSheet"
-                animationType="slide"
-                visible={modalActive}
-            >
-                <View style={styles.checkOutContainer}>
-                    <Pressable onPress={() => setModalActive(!modalActive)}>
-                        <Text style={{ fontSize: 50 }}>X</Text>
-                    </Pressable>
-                    <Text style={{ textAlign: 'center', fontSize: 30, margin: 40 }}>Check out</Text>
-                    <CardField
-                        onCardChange={(cardDetails) => {
-                            if (cardDetails.complete) setCompleteCardDetails(cardDetails.complete)
-                        }}
-                        postalCodeEnabled={true}
-                        placeholder={{
-                            number: '4242 4242 4242 4242',
-                        }}
-                        cardStyle={{
-                            backgroundColor: '#FFFFFF',
-                            textColor: '#000000',
-                        }}
-                        style={{
-                            width: '100%',
-                            height: 50,
-                            marginVertical: 30,
-                        }}
-                        onFocus={(focusedField) => {
-                            console.log('focusField', focusedField);
-                        }}
-                    />
-                    <Button onPress={handlePaymentPress} title="pay" />
-                </View>
-            </Modal >
-        )
+    const cardDetails = {
+        number: '4242424242424242',
+        expMonth: 10,
+        expYear: 24,
+        cvc: '888',
     }
 
     //working on this functionality / styling
@@ -200,6 +127,53 @@ export const Cart = ({ navigation }) => {
         )
     }
 
+    function Checkout() {
+        const [cardNumber, setCardNumber] = React.useState(0);
+        const [expMonth, setExpMonth] = React.useState(0)
+        const [expYear, setExpYear] = React.useState(0)
+        const [cvc, setCvc] = React.useState(0)
+
+        return (
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setModalVisible(!modalVisible);
+                    }}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Hello World!</Text>
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setModalVisible(!modalVisible)}
+                            >
+                                <Text style={styles.textStyle}>Hide Modal</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+                <Pressable
+                    style={[styles.button, styles.buttonOpen]}
+                    onPress={() => setModalVisible(true)}
+                >
+                    <Text style={styles.textStyle}>Show Modal</Text>
+                </Pressable>
+            </View>
+        );
+    }
+
+    function handlePayment() {
+        stripe.confirmPayment('client_secret_from_backend', cardDetails)
+            .then(result => {
+                Console.log("Success")
+            })
+            .catch(err => console.error("There was an error with payment"))
+    }
+
     //provides the 'cart(n)' on the header of the navigation
     React.useLayoutEffect(() => {
         navigation.setOptions({
@@ -209,19 +183,11 @@ export const Cart = ({ navigation }) => {
         });
         //updates when the navigation is changed or when the cart is updated
     }, [navigation, cart])
+
     return (
         <View style={styles.container}>
-            {/** Not sure how to set this up, there seems to be a blended need of react-native-stripe and the 
-             *  elements component of @stripe/react-stripe-js'; but does not seem to resolve the error about
-             *  the "view config get callback from component 'div' must be a function"
-             * 
-             */}
-            <StripeProvider publishableKey={STRIPE_API_KEY}>
-                {/* <Elements stripe={stripePromise} options={options}>
-                    
-                </Elements> */}
-                <CheckOut />
-            </StripeProvider>
+
+            <Checkout />
 
             <ScrollView>
                 <RenderCartItems />
