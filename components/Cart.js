@@ -4,9 +4,7 @@ import { ListItem, Card } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItem } from '../redux/cartSlice';
-import { STRIPE_API_KEY } from "@env"
-import stripe from 'react-native-stripe-payments';
-stripe.setOptions({ publishingKey: STRIPE_API_KEY });
+
 
 
 export const Cart = ({ navigation }) => {
@@ -14,18 +12,13 @@ export const Cart = ({ navigation }) => {
 
     //this is the cart from redux still, passed in from whatever navigate() sent it here.
     const cart = useSelector(state => state.cart.value)
-    const [modalActive, setModalActive] = React.useState(false)
+    const [modalActive, setModalActive] = React.useState(false);
+    const [total, setTotal] = React.useState(0);
+    const [tax, setTax] = React.useState(0);
+
     const dispatch = useDispatch()
 
-    const cardDetails = {
-        number: '4242424242424242',
-        expMonth: 10,
-        expYear: 24,
-        cvc: '888',
-    }
 
-    //working on this functionality / styling
-    //not currently working
     function removeItemFromCart(id) {
         let index = 0;
         for (let i = 0; i < cart.length; i++) {
@@ -36,6 +29,7 @@ export const Cart = ({ navigation }) => {
         }
         dispatch(removeItem(index))
     }
+
     function DeleteCartItemButton({ id }) {
         return (
             <TouchableOpacity
@@ -116,13 +110,14 @@ export const Cart = ({ navigation }) => {
                     break;
             }
         })
-        let tax = subTotal * .056;
-        let total = subTotal + tax;
+        setTax(subTotal * .056);
+        setTotal((subTotal + tax).toFixed(2));
+        console.log("Total: ", total.toString())
         return (
             <Card>
                 <Text>SubTotal: ${subTotal.toFixed(2)}</Text>
-                <Text>Tax: ${(tax).toFixed(2)}</Text>
-                <Text>Total: ${total.toFixed(2)}</Text>
+                <Text>Tax: ${tax.toFixed(2)}</Text>
+                <Text>Total: ${total}</Text>
             </Card>
         )
     }
@@ -138,10 +133,10 @@ export const Cart = ({ navigation }) => {
                 <Modal
                     animationType="slide"
                     transparent={true}
-                    visible={modalVisible}
+                    visible={modalActive}
                     onRequestClose={() => {
                         Alert.alert("Modal has been closed.");
-                        setModalVisible(!modalVisible);
+                        setModalActive(!modalActive);
                     }}
                 >
                     <View style={styles.centeredView}>
@@ -149,29 +144,23 @@ export const Cart = ({ navigation }) => {
                             <Text style={styles.modalText}>Hello World!</Text>
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}
+                                onPress={() => setModalActive(!modalActive)}
                             >
-                                <Text style={styles.textStyle}>Hide Modal</Text>
                             </Pressable>
                         </View>
                     </View>
                 </Modal>
-                <Pressable
-                    style={[styles.button, styles.buttonOpen]}
-                    onPress={() => setModalVisible(true)}
-                >
-                    <Text style={styles.textStyle}>Show Modal</Text>
-                </Pressable>
+
             </View>
         );
     }
 
-    function handlePayment() {
-        stripe.confirmPayment('client_secret_from_backend', cardDetails)
-            .then(result => {
-                Console.log("Success")
-            })
-            .catch(err => console.error("There was an error with payment"))
+
+
+    async function handleCheckoutClick() {
+        await fetch('https://fe7voztpynr7gtfyptoccjy22q0mytmm.lambda-url.us-west-1.on.aws/')
+            .then(response => response.json())
+            .then(data => console.log(data))
     }
 
     //provides the 'cart(n)' on the header of the navigation
@@ -193,7 +182,7 @@ export const Cart = ({ navigation }) => {
                 <RenderCartItems />
             </ScrollView>
             <RenderPrice />
-            <TouchableOpacity style={styles.checkOutBtn} onPress={() => setModalActive(!modalActive)}>
+            <TouchableOpacity style={styles.checkOutBtn} onPress={() => handleCheckoutClick()}>
                 <Text style={styles.checkOutBtnText}>Check out</Text>
             </TouchableOpacity>
             <Button style={styles.btn} title="Back" onPress={() => navigation.goBack()} />
